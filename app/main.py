@@ -49,7 +49,7 @@ def main():
     )
     message = chat.choices[0].message
     if hasattr(message, "tool_calls") and message.tool_calls:
-        tool_execute(message.tool_calls)
+        print(tool_execute(message.tool_calls))
     else:
         print(message.content)
     if not chat.choices or len(chat.choices) == 0:
