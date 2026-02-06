@@ -9,7 +9,8 @@ BASE_URL = os.getenv("OPENROUTER_BASE_URL", default="https://openrouter.ai/api/v
 def tool_execute(tool_calls):
     for tool_call in tool_calls:
         if tool_call.function.name == "Read":
-            with open(tool_call.function.arguments["file_path"], "r") as f:
+            arguments = json.loads(tool_call.function.arguments)
+            with open(arguments["file_path"], "r") as f:
                 return f.read()
         else:
             raise ValueError(f"Unknown tool: {tool_call.function.name}")
