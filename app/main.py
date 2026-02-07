@@ -19,7 +19,7 @@ def tool_execute(tool_calls):
         if tool_call.function.name == "Read":
             return read(arguments["file_path"])
         elif tool_call.function.name == "Write":
-            write(arguments["file_path"], arguments["content"])
+            return write(arguments["file_path"], arguments["content"])
         else:
             raise ValueError(f"Unknown tool: {tool_call.function.name}")
 def agent_loop(client, args):
