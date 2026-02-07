@@ -12,6 +12,10 @@ def tool_execute(tool_calls):
             arguments = json.loads(tool_call.function.arguments)
             with open(arguments["file_path"], "r") as f:
                 return f.read()
+        elif tool_call.function.name == "Write":
+            arrguments = json.loads(tool_call.function.arguments)
+            with open(arguments["file_path"], "w") as f:
+                f.write(arguments["content"])
         else:
             raise ValueError(f"Unknown tool: {tool_call.function.name}")
 def agent_loop(client, args):
@@ -31,6 +35,27 @@ def agent_loop(client, args):
                         }
                     },
                     "required": ["file_path"]
+                }
+            }
+        },
+        {
+            "type": "function",
+            "function": {
+                "name": "Write",
+                "description": "Write content to a file",
+                "parameters": {
+                "type": "object",
+                "required": ["file_path", "content"],
+                "properties": {
+                    "file_path": {
+                    "type": "string",
+                    "description": "The path of the file to write to"
+                    },
+                    "content": {
+                    "type": "string",
+                    "description": "The content to write to the file"
+                    }
+                }
                 }
             }
         }
