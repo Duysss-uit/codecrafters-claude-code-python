@@ -13,11 +13,11 @@ def write(file_path, content):
     with open(file_path, "w") as f:
         f.write(content)
 def tool_execute(tool_calls):
+    arguments = json.loads(tool_call.function.arguments)
     for tool_call in tool_calls:
         if tool_call.function.name == "Read":
-            return read(tool_call.function.arguments)
+            return read(arguments["file_path"])
         elif tool_call.function.name == "Write":
-            arguments = json.loads(tool_call.function.arguments)
             write(arguments["file_path"], arguments["content"])
         else:
             raise ValueError(f"Unknown tool: {tool_call.function.name}")
