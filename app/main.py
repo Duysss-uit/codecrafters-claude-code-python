@@ -85,7 +85,7 @@ def agent_loop(client, args):
                                 "arguments": tc.function.arguments,
                             },
                         }
-                        for tc in chat.choices[0].message.tool_calls
+                        for tc in message.tool_calls
                     ],
                 }
             )
