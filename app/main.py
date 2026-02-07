@@ -73,7 +73,7 @@ def agent_loop(client, args):
             messages.append({
                 "role": "assistant",
                 "content": message.content,
-                "tool_calls": message.tool_calls
+                "tool_calls": [tc.model_dump() for tc in message.tool_calls]
             })
             result = tool_execute(message.tool_calls)
             messages.append({
