@@ -13,8 +13,8 @@ def write(file_path, content):
     with open(file_path, "w") as f:
         f.write(content)
 def tool_execute(tool_calls):
-    arguments = json.loads(tool_call.function.arguments)
     for tool_call in tool_calls:
+        arguments = json.loads(tool_call.function.arguments)
         if tool_call.function.name == "Read":
             return read(arguments["file_path"])
         elif tool_call.function.name == "Write":
