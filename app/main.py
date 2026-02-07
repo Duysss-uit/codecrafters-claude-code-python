@@ -12,6 +12,7 @@ def read(file_path):
 def write(file_path, content):
     with open(file_path, "w") as f:
         f.write(content)
+    return "OK"
 def tool_execute(tool_calls):
     for tool_call in tool_calls:
         arguments = json.loads(tool_call.function.arguments)
