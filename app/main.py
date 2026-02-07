@@ -13,7 +13,7 @@ def tool_execute(tool_calls):
             with open(arguments["file_path"], "r") as f:
                 return f.read()
         elif tool_call.function.name == "Write":
-            arrguments = json.loads(tool_call.function.arguments)
+            arguments = json.loads(tool_call.function.arguments)
             with open(arguments["file_path"], "w") as f:
                 f.write(arguments["content"])
         else:
