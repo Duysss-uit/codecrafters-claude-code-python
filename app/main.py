@@ -6,16 +6,19 @@ from openai import OpenAI
 
 API_KEY = os.getenv("OPENROUTER_API_KEY")
 BASE_URL = os.getenv("OPENROUTER_BASE_URL", default="https://openrouter.ai/api/v1")
+def read(file_path):
+    with open(file_path, "r") as f:
+        return f.read()
+def write(file_path, content):
+    with open(file_path, "w") as f:
+        f.write(content)
 def tool_execute(tool_calls):
     for tool_call in tool_calls:
         if tool_call.function.name == "Read":
-            arguments = json.loads(tool_call.function.arguments)
-            with open(arguments["file_path"], "r") as f:
-                return f.read()
+            return read(tool_call.function.arguments)
         elif tool_call.function.name == "Write":
             arguments = json.loads(tool_call.function.arguments)
-            with open(arguments["file_path"], "w") as f:
-                f.write(arguments["content"])
+            write(arguments["file_path"], arguments["content"])
         else:
             raise ValueError(f"Unknown tool: {tool_call.function.name}")
 def agent_loop(client, args):
@@ -60,7 +63,7 @@ def agent_loop(client, args):
             }
         }
     ]
-    for i in range(5):
+    while True:
         chat = client.chat.completions.create(
             model="anthropic/claude-haiku-4.5",
             messages=messages,
@@ -73,8 +76,19 @@ def agent_loop(client, args):
             messages.append({
                 "role": "assistant",
                 "content": message.content,
-                "tool_calls": message.tool_calls
-            })
+                "tool_calls":  [
+                        {
+                            "id": tc.id,
+                            "type": "function",
+                            "function": {
+                                "name": tc.function.name,
+                                "arguments": tc.function.arguments,
+                            },
+                        }
+                        for tc in chat.choices[0].message.tool_calls
+                    ],
+                }
+            )
             result = tool_execute(message.tool_calls)
             messages.append({
                 "role": "tool",
