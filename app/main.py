@@ -13,6 +13,9 @@ def write(file_path, content):
     with open(file_path, "w") as f:
         f.write(content)
     return "OK"
+def bash(command): 
+    result = subprocess.run(command, shell=True, capture_output=True, text=True)
+    return result.stdout + result.stderr
 def tool_execute(tool_calls):
     for tool_call in tool_calls:
         arguments = json.loads(tool_call.function.arguments)
@@ -20,6 +23,8 @@ def tool_execute(tool_calls):
             return read(arguments["file_path"])
         elif tool_call.function.name == "Write":
             return write(arguments["file_path"], arguments["content"])
+        elif tool_call.function.name == "Bash":
+            return bash(arguments["command"])
         else:
             raise ValueError(f"Unknown tool: {tool_call.function.name}")
 def agent_loop(client, args):
@@ -60,6 +65,22 @@ def agent_loop(client, args):
                     "description": "The content to write to the file"
                     }
                 }
+                }
+            }
+        },{
+            "type": "function",
+            "function": {
+                "name": "Bash",
+                "description": "Execute a shell command",
+                "parameters": {
+                    "type": "object",
+                    "required": ["command"],
+                    "properties": {
+                        "command": {
+                            "type": "string",
+                            "description": "The command to execute"
+                        }
+                    }
                 }
             }
         }
