@@ -2,6 +2,7 @@ import argparse
 import os
 import sys
 import json 
+import subprocess
 from openai import OpenAI
 
 API_KEY = os.getenv("OPENROUTER_API_KEY")
